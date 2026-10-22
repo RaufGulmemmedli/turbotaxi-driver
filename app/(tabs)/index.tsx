@@ -1,98 +1,68 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { AppConfig } from '@/constants/config';
+import { useAuth } from '@/contexts/auth-context';
 
-export default function HomeScreen() {
+export default function DashboardScreen() {
+  const insets = useSafeAreaInsets();
+  const { user } = useAuth();
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <ThemedView style={styles.flex}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 24 }]}>
+        <View style={styles.header}>
+          <ThemedText type="title">Dashboard</ThemedText>
+          <ThemedText style={styles.subtitle}>
+            {user?.companyName
+              ? `Signed in for ${user.companyName}`
+              : `Welcome${user?.fullName ? `, ${user.fullName}` : ''}`}
+            {user?.isDemo ? '  ·  Demo mode' : ''}
+          </ThemedText>
+        </View>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
+        <View style={styles.cards}>
+          <Card title="Today's trips" value="0" hint="Trips assigned to you today" />
+          <Card title="Status" value="Offline" hint="Go online to start receiving trips" />
+          <Card title="Earnings" value="—" hint="Operational data for your organization" />
+        </View>
+
+        <ThemedText style={styles.note}>
+          Core operational features (fleet, trips, and driver data) belong to {AppConfig.appName}{' '}
+          organizations and are only available to approved accounts.
         </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </ScrollView>
+    </ThemedView>
+  );
+}
+
+function Card({ title, value, hint }: { title: string; value: string; hint: string }) {
+  return (
+    <View style={styles.card}>
+      <ThemedText style={styles.cardTitle}>{title}</ThemedText>
+      <ThemedText style={styles.cardValue}>{value}</ThemedText>
+      <ThemedText style={styles.cardHint}>{hint}</ThemedText>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  flex: { flex: 1 },
+  content: { padding: 24, gap: 24 },
+  header: { gap: 6 },
+  subtitle: { fontSize: 15, opacity: 0.8 },
+  cards: { gap: 14 },
+  card: {
+    borderRadius: 14,
+    padding: 18,
+    gap: 6,
+    borderWidth: StyleSheet.hairlineWidth * 2,
+    borderColor: '#80808033',
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+  cardTitle: { fontSize: 14, opacity: 0.7 },
+  cardValue: { fontSize: 28, fontWeight: '700' },
+  cardHint: { fontSize: 13, opacity: 0.6 },
+  note: { fontSize: 13, lineHeight: 20, opacity: 0.7 },
 });

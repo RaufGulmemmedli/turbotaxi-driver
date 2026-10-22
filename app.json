@@ -4,12 +4,17 @@
     "slug": "TaxiDriver",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/driver-icon.png",
     "scheme": "taxidriver",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "icon": "./assets/images/driver-icon.png",
+      "bundleIdentifier": "com.turbotaxi.driver",
+      "buildNumber": "5",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -43,6 +48,20 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "apiBaseUrl": "",
+      "website": "https://turbotaxi.app",
+      "supportEmail": "support@turbotaxi.app",
+      "salesEmail": "sales@turbotaxi.app",
+      "registrationEnabled": "true",
+      "demoEnabled": "true",
+      "demoEmail": "demo@turbotaxi.app",
+      "demoPassword": "demo1234",
+      "router": {},
+      "eas": {
+        "projectId": "a935220f-ad1c-4292-b555-fa6510111277"
+      }
     }
   }
 }
